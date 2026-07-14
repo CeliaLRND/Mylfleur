@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Catalogue Floral — Planto</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Charte Graphique - Minimaliste & Botanique */
+        :root {
+            --bg-color: #f7f9f7;
+            --card-bg: #ffffff;
+            --primary-color: #1c4436;
+            --primary-light: #e2ece6;
+            --text-main: #1a1e1b;
+            --text-muted: #606863;
+            --accent-color: #40916c;
+            --font-serif: 'Playfair Display', Georgia, serif;
+            --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            padding-bottom: 100px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        .site-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 40px;
+            background-color: transparent;
+        }
+
+        .logo {
+            font-family: var(--font-serif);
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-main);
+            margin-left: 24px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 60px 0;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .hero .subtitle {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent-color);
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .hero h1 {
+            font-family: var(--font-serif);
+            font-size: 48px;
+            font-weight: 600;
+            line-height: 1.2;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .hero .accent-text {
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        .hero-desc {
+            color: var(--text-muted);
+            font-size: 16px;
+        }
+
+        /* Catalog Grid */
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 32px;
+            margin-top: 20px;
+            margin-bottom: 60px;
+        }
+
+        .flower-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .flower-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(28, 68, 54, 0.06);
+        }
+
+        .image-container {
+            position: relative;
+            width: 100%;
+            padding-top: 115%;
+            overflow: hidden;
+            background-color: #eaeaea;
+        }
+
+        .image-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .flower-card:hover .image-container img {
+            transform: scale(1.03);
+        }
+
+        /* Badges */
+        .flower-badge {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background-color: var(--primary-color);
+            color: #ffffff;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 30px;
+            z-index: 2;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Selection State */
+        .selection-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(28, 68, 54, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            z-index: 1;
+        }
+
+        .check-icon {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .flower-card.selected {
+            outline: 3px solid var(--primary-color);
+        }
+
+        .flower-card.selected .selection-overlay {
+            opacity: 1;
+        }
+
+        .flower-info {
+            padding: 20px;
+        }
+
+        .flower-info h3 {
+            font-family: var(--font-serif);
+            font-size: 18px;
+            color: var(--primary-color);
+            margin-bottom: 4px;
+        }
+
+        .flower-info p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Floating Selection Bar */
+        .selection-bar {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary-color);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 10;
+            width: calc(100% - 48px);
+            max-width: 600px;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease;
+        }
+
+        .selection-bar.hidden {
+            transform: translateX(-50%) translateY(100px);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .bar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .selection-text {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .count-badge {
+            background-color: white;
+            color: var(--primary-color);
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            line-height: 24px;
+            text-align: center;
+            border-radius: 50%;
+            font-weight: 700;
+            margin-right: 6px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: #ffffff;
+            color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-light);
+        }
+
+        .btn-secondary {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+
+        /* Footer */
+        .site-footer {
+            text-align: center;
+            padding: 40px 0;
+            color: var(--text-muted);
+            font-size: 12px;
+            border-top: 1px solid rgba(0,0,0,0.04);
+        }
+
+        @media(max-width: 600px) {
+            .hero h1 {
+                font-size: 32px;
+            }
+            .bar-content {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+            .selection-bar {
+                border-radius: 20px;
+                bottom: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="logo">Planto.</div>
+        <nav class="nav-links">
+            <a href="#" class="active">Fleurs</a>
+            <a href="#">À propos</a>
+            <a href="#">Contact</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <span class="subtitle">Créations artisanales & Éphémères</span>
+            <h1>Chaque fleur raconte <br><span class="accent-text">une histoire</span></h1>
+            <p class="hero-desc">Explorez notre collection de compositions uniques. Cliquez sur vos créations favorites pour générer votre liste et nous la partager facilement.</p>
+        </section>
+
+        <section class="catalog-grid">
+            <!-- Répétez ce bloc de carte pour les numéros 1 à 9 en remplaçant les images par vos propres fichiers une fois hébergés -->
+            <!-- Nous lions ici des placeholders temporaires pour le test local -->
+            <div class="flower-card" data-number="1" onclick="toggleSelect(1)">
+                <div class="image-container">
+                    <img src="https://picsum.photos/id/12/800/900" alt="Composition florale N°1" loading="lazy">
+                    <div class="flower-badge">N° 1</div>
+                    <div class="selection-overlay">
+                        <span class="check-icon">✓ Sélectionné</span>
+                    </div>
+                </div>
+                <div class="flower-info">
+                    <h3>Composition N° 1</h3>
+                    <p>Création florale personnalisée</p>
+                </div>
+            </div>
+
+            <div class="flower-card" data-number="2" onclick="toggleSelect(2)">
+                <div class="image-container">
+                    <img src="https://picsum.photos/id/152/800/900" alt="Composition N°2" loading="lazy">
+                    <div class="flower-badge">N° 2</div>
+                    <div class="selection-overlay">
+                        <span class="check-icon">✓ Sélectionné</span>
+                    </div>
+                </div>
+                <div class="flower-info">
+                    <h3>Composition N° 2</h3>
+                    <p>Création florale personnalisée</p>
+                </div>
+            </div>
+
+            <div class="flower-card" data-number="3" onclick="toggleSelect(3)">
+                <div class="image-container">
+                    <img src="https://picsum.photos/id/306/800/900" alt="Composition N°3" loading="lazy">
+                    <div class="flower-badge">N° 3</div>
+                    <div class="selection-overlay">
+                        <span class="check-icon">✓ Sélectionné</span>
+                    </div>
+                </div>
+                <div class="flower-info">
+                    <h3>Composition N° 3</h3>
+                    <p>Création florale personnalisée</p>
+                </div>
+            </div>
+
+            <div class="flower-card" data-number="4" onclick="toggleSelect(4)">
+                <div class="image-container">
+                    <img src="https://picsum.photos/id/360/800/900" alt="Composition N°4" loading="lazy">
+                    <div class="flower-badge">N° 4</div>
+                    <div class="selection-overlay">
+                        <span class="check-icon">✓ Sélectionné</span>
+                    </div>
+                </div>
+                <div class="flower-info">
+                    <h3>Composition N° 4</h3>
+                    <p>Création florale personnalisée</p>
+                </div>
+            </div>
+
+            <div class="flower-card" data-number="5" onclick="toggleSelect(5)">
+                <div class="image-container">
+                    <img src="https://picsum.photos/id/429/800/900" alt="Composition N°5" loading="lazy">
+                    <div class="flower-badge">N° 5</div>
+                    <div class="selection-overlay">
+                        <span class="check-icon">✓ Sélectionné</span>
+                    </div>
+                </div>
+                <div class="flower-info">
+                    <h3>Composition N° 5</h3>
+                    <p>Création florale personnalisée</p>
+                </div>
+            </div>
+
+            <div class="flower-card" data-number="6" onclick="toggleSelect(6)">
+                <div class="image-container">
+                    <img src="https://picsum.photos/id/513/800/900" alt="Composition N°6" loading="lazy">
+                    <div class="flower-badge">N° 6</div>
+                    <div class="selection-overlay">
+                        <span class="check-icon">✓ Sélectionné</span>
+                    </div>
+                </div>
+                <div class="flower-info">
+                    <h3>Composition N° 6</h3>
+                    <p>Création florale personnalisée</p>
+                </div>
+            </div>
+
+            <div class="flower-card" data-number="7" onclick="toggleSelect(7)">
+                <div class="image-container">
+                    <img src="https://picsum.photos/id/628/800/900" alt="Composition N°7" loading="lazy">
+                    <div class="flower-badge">N° 7</div>
+                    <div class="selection-overlay">
+                        <span class="check-icon">✓ Sélectionné</span>
+                    </div>
+                </div>
+                <div class="flower-info">
+                    <h3>Composition N° 7</h3>
+                    <p>Création florale personnalisée</p>
+                </div>
+            </div>
+
+            <div class="flower-card" data-number="8" onclick="toggleSelect(8)">
+                <div class="image-container">
+                    <img src="https://picsum.photos/id/652/800/900" alt="Composition N°8" loading="lazy">
+                    <div class="flower-badge">N° 8</div>
+                    <div class="selection-overlay">
+                        <span class="check-icon">✓ Sélectionné</span>
+                    </div>
+                </div>
+                <div class="flower-info">
+                    <h3>Composition N° 8</h3>
+                    <p>Création florale personnalisée</p>
+                </div>
+            </div>
+
+            <div class="flower-card" data-number="9" onclick="toggleSelect(9)">
+                <div class="image-container">
+                    <img src="https://picsum.photos/id/804/800/900" alt="Composition N°9" loading="lazy">
+                    <div class="flower-badge">N° 9</div>
+                    <div class="selection-overlay">
+                        <span class="check-icon">✓ Sélectionné</span>
+                    </div>
+                </div>
+                <div class="flower-info">
+                    <h3>Composition N° 9</h3>
+                    <p>Création florale personnalisée</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Selection Bar -->
+    <div id="selection-summary" class="selection-bar hidden">
+        <div class="bar-content">
+            <div class="selection-text">
+                <span class="count-badge" id="selected-count">0</span> créations sélectionnées
+            </div>
+            <div class="actions">
+                <button class="btn btn-secondary" onclick="clearSelection()">Réinitialiser</button>
+                <button class="btn btn-primary" onclick="copySelection()">Copier mes choix</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>© 2026 Planto. Tous droits réservés.</p>
+    </footer>
+
+    <script>
+        let selectedFlowers = new Set();
+
+        function toggleSelect(number) {
+            const card = document.querySelector(`.flower-card[data-number="${number}"]`);
+            if (selectedFlowers.has(number)) {
+                selectedFlowers.delete(number);
+                card.classList.remove('selected');
+            } else {
+                selectedFlowers.add(number);
+                card.classList.add('selected');
+            }
+            updateBar();
+        }
+
+        function updateBar() {
+            const bar = document.getElementById('selection-summary');
+            const countBadge = document.getElementById('selected-count');
+            
+            if (selectedFlowers.size > 0) {
+                bar.classList.remove('hidden');
+                countBadge.textContent = selectedFlowers.size;
+            } else {
+                bar.classList.add('hidden');
+            }
+        }
+
+        function clearSelection() {
+            selectedFlowers.clear();
+            document.querySelectorAll('.flower-card').forEach(card => card.classList.remove('selected'));
+            updateBar();
+        }
+
+        function copySelection() {
+            if (selectedFlowers.size === 0) return;
+            const sortedList = Array.from(selectedFlowers).sort((a, b) => a - b);
+            const textToCopy = `Bonjour ! Je suis intéressé(e) par ces compositions de votre catalogue : N° ${sortedList.join(', N° ')}. Pouvez-vous me dire si elles sont disponibles ?`;
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert('Votre sélection a été copiée ! Vous pouvez maintenant coller ce texte (Ctrl+V ou appui long) dans un message WhatsApp ou SMS à envoyer à votre fleuriste.');
+            }).catch(err => {
+                console.error('Erreur', err);
+            });
+        }
+    </script>
+</body>
+</html>
