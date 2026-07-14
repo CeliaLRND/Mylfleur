@@ -526,10 +526,10 @@
         function copySelection() {
             if (selectedFlowers.size === 0) return;
             const sortedList = Array.from(selectedFlowers).sort((a, b) => a - b);
-            const textToCopy = `Bonjour ! Je suis intéressé(e) par ces compositions de votre catalogue : N° ${sortedList.join(', N° ')}. Pouvez-vous me dire si elles sont disponibles ?`;
+            const textToCopy = `Bonjour ! Je suis intéressé(e) par ces compositions de votre catalogue : N° ${sortedList.join(', N° ')}.`;
             
             navigator.clipboard.writeText(textToCopy).then(() => {
-                alert('Votre sélection a été copiée ! Vous pouvez maintenant coller ce texte (Ctrl+V ou appui long) dans un message WhatsApp ou SMS à envoyer à votre fleuriste.');
+                alert('Votre sélection a été copiée ! Vous pouvez maintenant coller ce texte (appui long) dans un message WhatsApp.');
             }).catch(err => {
                 console.error('Erreur', err);
             });
